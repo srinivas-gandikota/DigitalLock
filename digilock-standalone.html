@@ -1,0 +1,173 @@
+
+<html>
+
+<body onload=newLock()>
+<script>
+
+var key = '235'
+var maxAttempts = 6;
+var attempts = 0;
+
+
+var digitMatch = 0;
+var posMatch = 0;
+
+
+function getMatches(ukey)
+{
+    digitMatch = 0;
+    posMatch = 0;
+
+    for (i = 0; i < 3; i++) {
+        var match = false;
+        for (j=0; j < 3; j++) {
+             if (ukey[i] == key[j]) {
+                 match = true;
+                 break;
+             }
+        }
+
+       if (match) {
+          digitMatch++;
+          if (i == j)
+              posMatch++;
+       }
+    }
+
+}
+
+function getNumberString(num)
+{
+    var numstr = ""
+    if (num == 3)
+        numstr = "Three Numbers are";
+    else if (num == 2)
+        numstr = "Two Numbers are";
+    else if (num == 1)
+        numstr = "One Number is";
+    else
+        numstr = "No Numbers are";
+
+   return numstr;
+        
+}
+
+function getHint()
+{
+    var displayStr = "";
+    if (digitMatch) {
+
+       if (digitMatch == posMatch) {
+           displayStr += getNumberString(digitMatch) + " correct and well placed"
+       } else if (posMatch) {
+           displayStr += getNumberString(digitMatch) + " correct "
+           displayStr += " and "+ getNumberString(posMatch) + " well placed"
+       } else {
+           displayStr += getNumberString(digitMatch) + " correct "
+           displayStr += " but wrongly placed"
+       }
+    } else {
+      displayStr += "Nothing is correct" 
+    }
+    return displayStr;
+}
+
+function displayHint(ukey, hint)
+{
+
+     var hintHtml = "<tr><td align=center>"+ukey+"</td><td padding=50px >"+hint+"</td></tr>"
+
+     var hintBlock = document.getElementById("hintBlock2");
+     hintBlock.innerHTML += hintHtml;
+}
+
+function displayStatus(status)
+{
+    var statusBlock = document.getElementById("statusBlock");
+    statusBlock.innerHTML = status;
+}
+
+function validateKey(ukey)
+{
+    if (ukey.length != 3) {
+        displayStatus("Enter 3 digits !!");
+        return false;
+    } else if (key == ukey) {
+        displayStatus("<font color=#228B22>Success!! You Cracked The Code !!!</font> <br> Attempt another Digital Lock !!");
+        return false;
+    } else {
+        if (attempts == maxAttempts - 1) {
+            displayStatus("<font color=red>You Lost !!</font> Key is <font color=blue> <b>"+key+"</b></font> <br> Attempt another Digital Lock !!" );
+            return false;
+        } else {
+            attempts++;
+            displayStatus("Check the Hint ! "+(maxAttempts - attempts)+ " Attempts left !!");
+        }
+    }
+
+    return true;
+}
+
+function checkKey()
+{
+    var ukeyObj = document.getElementById("ukey");
+    var ukey = ukeyObj.value;
+    if (validateKey(ukey)) {
+        getMatches(ukey);
+        displayHint(ukey, getHint());
+    }
+    ukeyObj.select();
+}
+
+function genKey()
+{
+    var key = "";
+    //key += Math.ceil(Math.random()*9);
+    for (i=0; i<3; i++) {
+    var done = false;
+    while (!done) {
+       t = Math.ceil(Math.random()*9);
+       if (!key.match(t)) {
+           key += t;
+           break;
+       }
+    }
+    }
+    return key;
+}
+
+function newLock()
+{
+    key=genKey();
+    //key="234";
+    attempts=0;
+    document.getElementById("hintBlock2").innerHTML="";
+    displayStatus("New Digital Lock Generated !! Enter 3 digit key !!");
+    var ukeyObj = document.getElementById("ukey");
+    ukeyObj.value = "";
+    ukeyObj.select();
+}
+</script>
+
+<div align=center>
+<H1> Digital Lock </H1>
+<H3> Luck and Logic </H3>
+<input type="button" value="New Lock" onclick="newLock()" >
+<p>
+Enter 3 Digit Key(1-9): <input type="text" id="ukey"  onkeypress="Javascript: if (event.keyCode==13) checkKey();">
+<input type="button" value="unlock" onclick="checkKey()" >
+<br>
+</p>
+<br>
+<p id="statusBlock">
+</p>
+
+<table id="hintBlock" border=2 align=center cellpadding="10">
+<tr><td width=100> Attempted Key </td> <td width=300 align=center> Hint </td> </tr>
+<tbody id="hintBlock2">
+</tbody>
+</table>
+
+</div>
+</body>
+</html>
