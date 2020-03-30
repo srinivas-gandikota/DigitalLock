@@ -17,20 +17,26 @@ function getMatches(ukey)
 {
     digitMatch = 0;
     posMatch = 0;
-
+    var digitFlag = [false, false, false, false, false, false, false, false, false, false];
     for (i = 0; i < 3; i++) {
-        var match = false;
+        var digit_match = false;
+        var pos_match = false;
         for (j=0; j < 3; j++) {
              if (ukey[i] == key[j]) {
-                 match = true;
+                 if(!digitFlag[ukey[i]]){
+                     digit_match = true;
+                     digitFlag[ukey[i]] = true;
+                 }
+                 pos_match = true;
                  break;
              }
         }
 
-       if (match) {
-          digitMatch++;
-          if (i == j)
-              posMatch++;
+       if (digit_match) {
+           digitMatch++;
+       }
+       if (pos_match && i == j){
+           posMatch++;
        }
     }
 
